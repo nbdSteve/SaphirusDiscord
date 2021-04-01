@@ -1,0 +1,5 @@
+name: SaphirusDiscord
+version: ${project.version}
+main: gg.steve.mc.saphirus.discord.SaphirusDiscord
+api-version: 1.16
+authors: [ stevegoodhill ]

@@ -1,0 +1,31 @@
+discord:
+  token: 'xxxxxx'
+  channel: xxxxxx
+  gateway-intents:
+    - GUILD_MEMBERS
+    - GUILD_EMOJIS
+    - DIRECT_MESSAGES
+    - GUILD_MESSAGE_REACTIONS
+    - GUILD_MESSAGES
+    - GUILD_MESSAGE_TYPING
+    - GUILD_PRESENCES
+    - GUILD_VOICE_STATS
+  time-stamp: false
+  game: 'Saphirus'
+  embed-color: 255:25:25
+
+message:
+  header: ''
+  body:
+    - '**Sale**'
+    - '**{player}** just added {amount}x **{material}** for **{price}{currency}**.'
+    - ''
+    - 'Name:'
+    - '**{item-name}**'
+    - ''
+    - 'Lore:'
+    - '**{lore}**'
+    - ''
+    - 'Enchantments:'
+    - '**{enchantments}**'
+  footer: 'Saphirus Auction'

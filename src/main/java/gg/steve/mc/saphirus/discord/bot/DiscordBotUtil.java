@@ -17,6 +17,7 @@ public class DiscordBotUtil {
 
     public static void enableBot() {
         String token = Files.CONFIG.get().getString("discord.token");
+        LogUtil.info("running");
         List<GatewayIntent> intents = new ArrayList<>();
         for (String intent : Files.CONFIG.get().getStringList("discord.gateway-intents")) {
             try {
@@ -25,18 +26,16 @@ public class DiscordBotUtil {
                 LogUtil.warning("Error adding gateway intent " + intent.toUpperCase() + ", please verify that this is a valid gateway intent.");
             }
         }
-        Thread thread = new Thread(() -> {
-            try {
-                JDABuilder builder = JDABuilder.create(token, intents);
-                builder.setMemberCachePolicy(MemberCachePolicy.ALL);
-                jda = builder.build();
-                jda.getPresence().setActivity(Activity.playing(Files.CONFIG.get().getString("discord.game")));
-                Logger.info("Loading of the discord bot successfully completed.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, "SaphirusDiscord");
-        thread.start();
+        try {
+            JDABuilder builder = JDABuilder.create(token, intents);
+            builder.setMemberCachePolicy(MemberCachePolicy.ALL);
+            jda = builder.build();
+            jda.getPresence().setActivity(Activity.playing(Files.CONFIG.get().getString("discord.game")));
+            Logger.info("Loading of the discord bot successfully completed.");
+            Logger.info("Loading of the discord bot successfully completed. test test");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static JDA getJda() {

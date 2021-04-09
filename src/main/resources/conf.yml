@@ -1,6 +1,6 @@
 discord:
-  token: 'ODI2NDAxOTY2OTUxMjM1NjA0.YGL8zg.SfxZrYBLyFI_DBFZJMxRToMLA5w'
-  channel: 829294471740522519
+  token: 'x'
+  channel: 0
   gateway-intents:
     - GUILD_MEMBERS
     - GUILD_EMOJIS

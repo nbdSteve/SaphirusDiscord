@@ -1,12 +1,14 @@
 package gg.steve.mc.saphirus.discord.listener;
 
 import fr.maxlego08.zauctionhouse.api.AuctionItem;
-import fr.maxlego08.zauctionhouse.api.event.events.AuctionSellEvent;
+import fr.maxlego08.zauctionhouse.api.event.events.*;
 import gg.steve.mc.saphirus.discord.SaphirusDiscord;
 import gg.steve.mc.saphirus.discord.bot.DiscordBotUtil;
+import gg.steve.mc.saphirus.discord.bot.MessageDataStore;
 import gg.steve.mc.saphirus.discord.framework.utils.LogUtil;
 import gg.steve.mc.saphirus.discord.framework.yml.Files;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,19 +25,7 @@ public class AuctionListener implements Listener {
 
     @EventHandler
     public void onSale(AuctionSellEvent event) {
-        if (DiscordBotUtil.getJda() == null) {
-            LogUtil.info("cannot find jda");
-        }
-        TextChannel channel;
-        try {
-            channel = DiscordBotUtil.getJda().getTextChannelById(Files.CONFIG.get().getLong("discord.channel"));
-        } catch (Exception e) {
-            LogUtil.info("Cannot find channel");
-            return;
-        }
-        if (channel == null) {
-            LogUtil.info("Cannot find the channel");
-        }
+        TextChannel channel = DiscordBotUtil.getChannel();
         Bukkit.getScheduler().runTaskAsynchronously(SaphirusDiscord.getInstance(), () -> {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(getColor());
@@ -62,23 +52,35 @@ public class AuctionListener implements Listener {
                         .replace("{enchantments}", getEnchants(event.getAuctionItem().getItemStack()));
                 string.append(line + "\n");
             }
-//            for (int i = 0; i < Files.CONFIG.get().getStringList("message.body").size(); i++) {
-//                String line = Files.CONFIG.get().getStringList("message.body").get(i);
-//                line = line.replace("{player}", event.getPlayer().getName())
-//                        .replace("{item-name}", getName(event.getAuctionItem().getItemStack()))
-//                        .replace("{buyer}", buyer)
-//                        .replace("{amount}", SaphirusDiscord.format(event.getAuctionItem().getAmount()))
-//                        .replace("{material}", event.getAuctionItem().getItemStack().getType().name())
-//                        .replace("{price}", SaphirusDiscord.format(event.getPrice()))
-//                        .replace("{currency}", event.getEconomy().toCurrency())
-//                        .replace("{lore}", getLore(event.getAuctionItem().getItemStack()))
-//                        .replace("{enchantments}", getEnchants(event.getAuctionItem().getItemStack()));
-//                builder.addField("", line, false);
-//            }
             string.trimToSize();
             builder.addField("", string.toString(), false);
-            channel.sendMessage(builder.build()).complete();
+            Message message = channel.sendMessage(builder.build()).complete();
+            MessageDataStore.saveMessage(event.getAuctionItem(), message.getIdLong());
         });
+    }
+
+    @EventHandler
+    public void onRetrieve(AuctionRetrieveEvent event) {
+        AuctionItem auctionItem = event.getAuctionItem();
+        MessageDataStore.removeMessage(auctionItem);
+    }
+
+    @EventHandler
+    public void onRetrieve(AuctionAdminRemoveEvent event) {
+        AuctionItem auctionItem = event.getAuctionItem();
+        MessageDataStore.removeMessage(auctionItem);
+    }
+
+    @EventHandler
+    public void onBuy(AuctionPostBuyEvent event) {
+        AuctionItem auctionItem = event.getAuctionItem();
+        MessageDataStore.removeMessage(auctionItem);
+    }
+
+    @EventHandler
+    public void onExpire(AuctionItemExpireEvent event) {
+        AuctionItem auctionItem = event.getAuctionItem();
+        MessageDataStore.removeMessage(auctionItem);
     }
 
     public String getEnchants(ItemStack item) {
@@ -125,6 +127,7 @@ public class AuctionListener implements Listener {
     }
 
     private static final TreeMap<Integer, String> treemap = new TreeMap<Integer, String>();
+
     static {
         treemap.put(1000, "M");
         treemap.put(900, "CM");

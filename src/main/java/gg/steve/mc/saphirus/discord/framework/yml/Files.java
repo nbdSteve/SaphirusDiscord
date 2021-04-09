@@ -7,7 +7,8 @@ import java.io.File;
 
 public enum Files {
     // generic
-    CONFIG("conf.yml");
+    CONFIG("conf.yml"),
+    DATA("data.yml");
 
     private final String path;
 

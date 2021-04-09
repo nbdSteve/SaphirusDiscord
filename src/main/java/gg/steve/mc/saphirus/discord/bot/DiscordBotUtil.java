@@ -6,6 +6,7 @@ import gg.steve.mc.saphirus.discord.framework.yml.Files;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
@@ -17,7 +18,6 @@ public class DiscordBotUtil {
 
     public static void enableBot() {
         String token = Files.CONFIG.get().getString("discord.token");
-        LogUtil.info("running");
         List<GatewayIntent> intents = new ArrayList<>();
         for (String intent : Files.CONFIG.get().getStringList("discord.gateway-intents")) {
             try {
@@ -32,7 +32,6 @@ public class DiscordBotUtil {
             jda = builder.build();
             jda.getPresence().setActivity(Activity.playing(Files.CONFIG.get().getString("discord.game")));
             Logger.info("Loading of the discord bot successfully completed.");
-            Logger.info("Loading of the discord bot successfully completed. test test");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,5 +39,22 @@ public class DiscordBotUtil {
 
     public static JDA getJda() {
         return jda;
+    }
+
+    public static TextChannel getChannel() {
+        if (DiscordBotUtil.getJda() == null) {
+            LogUtil.warning("cannot find jda");
+        }
+        TextChannel channel;
+        try {
+            channel = DiscordBotUtil.getJda().getTextChannelById(Files.CONFIG.get().getLong("discord.channel"));
+        } catch (Exception e) {
+            LogUtil.warning("Cannot find channel");
+            return null;
+        }
+        if (channel == null) {
+            LogUtil.warning("Cannot find the channel");
+        }
+        return channel;
     }
 }

@@ -28,9 +28,7 @@ public class SetupManager {
     public static void setupFiles(FileManagerUtil fm) {
         fileManager = fm;
         Files.CONFIG.load(fm);
-//        Files.PERMISSIONS.load(fm);
-//        Files.DEBUG.load(fm);
-//        Files.MESSAGES.load(fm);
+        Files.DATA.load(fm);
     }
 
     public static void registerCommands(JavaPlugin instance) {
